@@ -46,7 +46,7 @@ function formatFetch(movies) {
         subtitle: {},
 				synopsis: movie.synopsis,
 				trailer: movie.trailer,
-				torrents: movie.torrents['en'] !== null ? movie.torrents['en'] : movie.torrents[Object.keys(movie.torrents)[0]],
+				torrents: movie.torrents['fr'] !== undefined ? movie.torrents['fr'] : ((movie.torrents["ca"] !== undefined) ? movie.torrents["ca"] : movie.torrents["en"]),
         langs: movie.torrents
 			};
 		}
