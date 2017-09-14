@@ -1,29 +1,93 @@
 {
-  "name": "butter-provider-movies",
-  "version": "1.0.4",
-  "description": "A Butter provider for movies, completable with the popcorn-api.",
-  "main": "index.js",
-  "butter": {
-    "timeout": 20000,
-    "testArgs": "MovieApi?&apiURL=https://movies-v2.api-fetch.website/,cloudflare+https://movies-v2.api-fetch.website/,http://localhost:5000/&lang=en&quality=720p"
+  "_args": [
+    [
+      {
+        "raw": "butter-provider-movies@1.0.3",
+        "scope": null,
+        "escapedName": "butter-provider-movies",
+        "name": "butter-provider-movies",
+        "rawSpec": "1.0.3",
+        "spec": "1.0.3",
+        "type": "version"
+      },
+      "C:\\Users\\romai\\Documents\\GitHub\\popcorn-desktop"
+    ]
+  ],
+  "_from": "butter-provider-movies@1.0.3",
+  "_id": "butter-provider-movies@1.0.3",
+  "_inCache": true,
+  "_location": "/butter-provider-movies",
+  "_nodeVersion": "7.2.0",
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/butter-provider-movies-1.0.3.tgz_1480860025229_0.5225164676085114"
   },
-  "scripts": {
-    "test": "tape ./node_modules/butter-provider/tests/*"
+  "_npmUser": {
+    "name": "chrisalderson",
+    "email": "ChrisAlderson@protonmail.com"
   },
-  "license": "MIT",
+  "_npmVersion": "4.0.2",
+  "_phantomChildren": {
+    "es6-object-assign": "1.1.0",
+    "memoizee": "0.4.11"
+  },
+  "_requested": {
+    "raw": "butter-provider-movies@1.0.3",
+    "scope": null,
+    "escapedName": "butter-provider-movies",
+    "name": "butter-provider-movies",
+    "rawSpec": "1.0.3",
+    "spec": "1.0.3",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/butter-provider-movies/-/butter-provider-movies-1.0.3.tgz",
+  "_shasum": "6004169d482a83d489345ca2af4323e3b718bd7e",
+  "_shrinkwrap": null,
+  "_spec": "butter-provider-movies@1.0.3",
+  "_where": "C:\\Users\\romai\\Documents\\GitHub\\popcorn-desktop",
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/ChrisAlderson/butter-provider-movies/issues"
+  },
   "dependencies": {
-    "butter-provider": "^0.9.0",
+    "butter-provider": "^0.5.1",
     "butter-sanitize": "^0.1.1",
-    "lodash": "^4.17.3",
+    "lodash": "^4.17.2",
     "q": "^1.4.1",
     "request": "^2.79.0"
   },
+  "description": "A Butter provider for movies, completable with the popcorn-api.",
   "devDependencies": {
-    "debug": "^2.6.0",
+    "debug": "^2.3.3",
     "tape": "^4.6.3"
   },
+  "directories": {},
+  "dist": {
+    "shasum": "6004169d482a83d489345ca2af4323e3b718bd7e",
+    "tarball": "https://registry.npmjs.org/butter-provider-movies/-/butter-provider-movies-1.0.3.tgz"
+  },
+  "gitHead": "4991cfbdcca55339e67d12f9b9002d4589a2bfdd",
+  "homepage": "https://github.com/ChrisAlderson/butter-provider-movies#readme",
+  "license": "ISC",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "chrisalderson",
+      "email": "chris_alderson@hmamail.com"
+    }
+  ],
+  "name": "butter-provider-movies",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChrisAlderson/butter-provider-movies.git"
-  }
+    "url": "git+https://github.com/ChrisAlderson/butter-provider-movies.git"
+  },
+  "scripts": {
+    "test": "node tests/basic.js"
+  },
+  "version": "1.0.3"
 }
