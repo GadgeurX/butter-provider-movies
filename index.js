@@ -9,12 +9,15 @@ var request = require('request');
 var sanitize = require('butter-sanitize');
 
 var MovieApi = function(args) {
-	if (!(this instanceof MovieApi)) return new MovieApi(args);
+	var that = this;
 
-	Generic.call(this, args);
+	MovieApi.super_.call(this);
 
-	this.apiURL = this.args.apiURL || ['https://movies-v2.api-fetch.website/'];
-  this.lang = this.args.lang || 'en';
+	if (args.apiURL) this.apiURL = args.apiURL.split(',');
+
+	this.language = args.language;
+	this.quality = args.quality;
+	this.translate = args.translate;
 };
 
 inherits(MovieApi, Generic);
@@ -23,32 +26,38 @@ MovieApi.prototype.config = {
 	name: 'MovieApi',
 	uniqueId: 'imdb_id',
 	tabName: 'MovieApi',
-  args: {
-    apiURL: Generic.ArgType.ARRAY,
-    lang: Generic.ArgType.STRING
-	},
+	type: 'movie',
 	metadata: 'trakttv:movie-metadata'
 };
 
-function formatFetch(movies) {
-	var results = _.map(movies, function (movie) {
+MovieApi.prototype.extractIds = function(items) {
+	return _.map(items.results, 'imdb_id');
+};
+
+function format(movies) {
+	var results = [];
+
+	movies.forEach(function(movie) {
 		if (movie.torrents) {
-			return {
+			results.push({
+				type: 'movie',
 				imdb_id: movie.imdb_id,
 				title: movie.title,
 				year: movie.year,
-				genres: movie.genres,
+				genre: movie.genres,
 				rating: parseInt(movie.rating.percentage, 10) / 10,
+				runtime: movie.runtime,
+        images: movie.images,
+				image: movie.images.poster,
+				cover: movie.images.poster,
+				backdrop: movie.images.fanart,
         poster: movie.images.poster,
-        type: Generic.ItemType.MOVIE,
-        runtime: movie.runtime,
-        backdrop: movie.images.fanart,
-        subtitle: {},
 				synopsis: movie.synopsis,
-				trailer: movie.trailer,
-				torrents: movie.torrents['fr'] !== undefined ? movie.torrents['fr'] : ((movie.torrents["ca"] !== undefined) ? movie.torrents["ca"] : movie.torrents["en"]),
-        langs: movie.torrents
-			};
+				trailer: movie.trailer !== null ? movie.trailer : false,
+				certification: movie.certification,
+				torrents: movie.torrents['fr'] !== undefined ? movie.torrents['fr'] : (movie.torrents['ca'] !== undefined) ? movie.torrents["ca"] : movie.torrents["en"],
+				langs: movie.torrents
+			});
 		}
 	});
 
@@ -56,26 +65,7 @@ function formatFetch(movies) {
 		results: sanitize(results),
 		hasMore: true
 	};
-}
-
-function formatDetail(movie) {
-  return {
-    imdb_id: movie.imdb_id,
-    title: movie.title,
-    year: movie.year,
-    genres: movie.genres,
-    rating: parseInt(movie.rating.percentage, 10) / 10,
-    poster: movie.images.poster,
-    type: Generic.ItemType.MOVIE,
-    runtime: movie.runtime,
-    backdrop: movie.images.fanart,
-    synopsis: movie.synopsis,
-    subtitle: {},
-    trailer: movie.trailer,
-    torrents: movie.torrents['en'] !== null ? movie.torrents['en'] : movie.torrents[Object.keys(movie.torrents)[0]],
-    langs: movie.torrents
-  };
-}
+};
 
 function processCloudFlareHack(options, url) {
 	var req = options;
@@ -90,7 +80,7 @@ function processCloudFlareHack(options, url) {
 		});
 	}
 	return req;
-}
+};
 
 function get(index, url, that) {
 	var deferred = Q.defer();
@@ -115,15 +105,15 @@ function get(index, url, that) {
 			console.error('API error:', err);
 			return deferred.reject(err);
 		} else {
-			return deferred.resolve(data);
+			return deferred.resolve(format(data));
 		}
 	});
 
 	return deferred.promise;
-}
+};
 
-MovieApi.prototype.extractIds = function (items) {
-	return _.map(items.results, 'imdb_id');
+MovieApi.prototype.resolveStream = function (src, filters, data) {
+	return data.langs[filters.lang][filters.quality];
 };
 
 MovieApi.prototype.fetch = function (filters) {
@@ -149,37 +139,20 @@ MovieApi.prototype.fetch = function (filters) {
 		params.sort = filters.sorter;
 	}
 
-  filters.page = filters.page ? filters.page : 1;
-
 	var index = 0;
 	var url = that.apiURL[index] + 'movies/' + filters.page + '?' + querystring.stringify(params).replace(/%25%20/g, '%20');
-	return get(index, url, that).then(formatFetch);
-};
-
-MovieApi.prototype.detail = function (torrent_id, old_data, debug) {
-  if (old_data) {
-    return Q(old_data);
-  }
-
-  var that = this;
-	var index = 0;
-	var url = that.apiURL[index] + 'movie/' + torrent_id;
-	return get(index, url, that).then(formatDetail);
+	return get(index, url, that);
 };
 
 MovieApi.prototype.random = function () {
 	var that = this;
 	var index = 0;
-	var url = that.apiURL[index] + 'random/movie';
-  return get(index, url, that).then(formatDetail);
+	var url = that.apiURL[index] + '/random/movie';
+	return get(index, url, that);
 };
 
-MovieApi.prototype.resolveStream = function (src, filters, data) {
-  filters.lang = filters.lang ? filters.lang : this.lang;
-	var qualities = Object.keys(data.torrents);
-  filters.quality = filters.quality !== 'none' ? filters.quality : qualities[0];
-
-	return data.langs[filters.lang][filters.quality];
+MovieApi.prototype.detail = function (torrent_id, old_data, debug) {
+	return Q(old_data);
 };
 
 module.exports = MovieApi;
